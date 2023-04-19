@@ -1,0 +1,35 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Azure Login
+      uses: azure/login-oidc@v1
+      with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+    - name: Deploy Bicep Template
+      uses: Azure/bicep-deploy@v1
+      with:
+        templatePath: 'bicep/main.bicep'
+        parameters: |
+          {
+            "storagePrefix": "ghabicepoidc123",
+            "storageSKU": "LRS",
+            "location": "westeurope"
+          }
+        resourceGroup: 'GitHubActionsRG'
+        location: 'westeurope'
