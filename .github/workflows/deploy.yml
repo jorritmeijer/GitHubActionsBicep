@@ -2,6 +2,11 @@ name: Azure Bicep Deploy
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
 env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
