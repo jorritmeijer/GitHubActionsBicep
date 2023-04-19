@@ -34,5 +34,5 @@ jobs:
         subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         resourceGroupName: 'GitHubActionsRG'
         template: 'bicep/main.bicep'
-        parameters: 'storagePrefix=ghabicepoidc123 storageSKU=Standard_LRS location=westeurope'
+        parameters: 'storagePrefix=ghabcpoidc storageSKU=Standard_LRS location=westeurope'
         failOnStdErr: false
