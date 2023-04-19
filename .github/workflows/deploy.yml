@@ -1,12 +1,6 @@
-name: Deploy to Azure
-
+name: Azure Bicep Deploy
 on:
   workflow_dispatch:
-
-permissions:
-  id-token: write
-  contents: read
-  pull-requests: write
 
 env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -14,25 +8,31 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Azure Login
-      uses: azure/login-oidc@v1.4.5
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login-oidc@v1.4.5
       with:
           client-id: ${{ secrets.ARM_CLIENT_ID }}
           tenant-id: ${{ secrets.ARM_TENANT_ID }}
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-    - name: Deploy Bicep Template
-      uses: Azure/bicep-deploy@v1
+
+      # Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
       with:
-        templatePath: 'bicep/main.bicep'
+        subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        resourceGroupName: 'GitHubActionsRG'
+        template: 'bicep/main.bicep'
         parameters: |
           {
             "storagePrefix": "ghabicepoidc123",
             "storageSKU": "LRS",
             "location": "westeurope"
           }
-        resourceGroup: 'GitHubActionsRG'
-        location: 'westeurope'
+        failOnStdErr: false
