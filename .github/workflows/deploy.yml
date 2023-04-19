@@ -16,11 +16,11 @@ jobs:
     - uses: actions/checkout@main
 
       # Log into Azure
-    - uses: azure/login-oidc@v1.4.5
+    - uses: azure/login@v1
       with:
-          client-id: ${{ secrets.ARM_CLIENT_ID }}
-          tenant-id: ${{ secrets.ARM_TENANT_ID }}
-          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        client-id: ${{ secrets.ARM_CLIENT_ID }}
+        tenant-id: ${{ secrets.ARM_TENANT_ID }}
+        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       # Deploy Bicep file
     - name: deploy
@@ -28,7 +28,7 @@ jobs:
       with:
         subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         resourceGroupName: 'GitHubActionsRG'
-        template: 'bicep/main.bicep'
+        template: $(Build.SourcesDirectory)/GitHubActionsBicep/bicep/main.bicep'
         parameters: |
           {
             "storagePrefix": "ghabicepoidc123",
